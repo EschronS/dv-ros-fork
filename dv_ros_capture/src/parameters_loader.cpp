@@ -28,6 +28,11 @@ ParametersLoader::ParametersLoader(const ros::NodeHandle &nodeHandle) {
 	nodeHandle.param<int>("noiseBackgroundActivityTime", value, 2000);
 	params_.noiseBATime = static_cast<int64_t>(value);
 
+	nodeHandle.param<bool>("frequencyFiltering", params_.frequencyFiltering, false);
+	float fvalue;
+	nodeHandle.param<float>("noiseBackgroundActivityTime", fvalue, 50.0);
+	params_.cutoffFrequency = static_cast<float>(value);
+
 	std::string tmp;
 	nodeHandle.getParam("cameraCalibrationFilePath", tmp);
 	params_.cameraCalibrationFilePath = static_cast<std::filesystem::path>(tmp);
@@ -66,6 +71,8 @@ void ParametersLoader::printConfiguration() {
 	ROS_INFO_STREAM("cameraCalibrationFilePath: " << params_.cameraCalibrationFilePath);
 	ROS_INFO_STREAM("noiseFiltering: " << (params_.noiseFiltering ? "yes" : "no"));
 	ROS_INFO_STREAM("noiseBackgroundActivityTime: " << params_.noiseBATime);
+	ROS_INFO_STREAM("frequencyFiltering: " << (params_.frequencyFiltering ? "yes" : "no"));
+	ROS_INFO_STREAM("cutoffFrequency: " << params_.cutoffFrequency);
 	ROS_INFO_STREAM("syncDevices: " << fmt::format("[{}]", fmt::join(params_.syncDeviceList, ", ")));
 	ROS_INFO_STREAM("waitForSync: " << (params_.waitForSync ? "yes" : "no"));
 	ROS_INFO(">>>>>> End of parameters <<<<<<");

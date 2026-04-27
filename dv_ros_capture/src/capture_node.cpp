@@ -3,6 +3,7 @@
 #include <dv-processing/camera/calibrations/camera_calibration.hpp>
 #include <dv-processing/io/camera/discovery.hpp>
 #include <dv-processing/kinematics/transformation.hpp>
+#include <dv-processing/noise/frequency_filters.hpp>
 
 #include <fmt/chrono.h>
 #include <fmt/core.h>
@@ -162,6 +163,8 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::DAVISConfig initialSettings    = dv_ros_capture::DAVISConfig::__getDefault__();
 		initialSettings.noise_filtering                = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time = static_cast<int>(mParams.noiseBATime);
+		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
+		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
 
 		davisColorServer->updateConfig(initialSettings);
 		davisColorServer->setCallback([this, &davis](const dv_ros_capture::DAVISConfig &config, uint32_t) {
@@ -189,6 +192,7 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 			}
 
 			updateNoiseFilter(config.noise_filtering, static_cast<int64_t>(config.noise_background_activity_time));
+			updateFrequencyFilter(config.frequency_filtering, static_cast<float>(config.cutoff_frequency));
 		});
 
 		if (davis->isTriggerStreamAvailable()) {
@@ -211,6 +215,8 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::DVXplorerConfig initialSettings = dv_ros_capture::DVXplorerConfig::__getDefault__();
 		initialSettings.noise_filtering                 = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time  = static_cast<int>(mParams.noiseBATime);
+		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
+		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
 
 		dvxplorerServer->updateConfig(initialSettings);
 		dvxplorerServer->setCallback([this, &dvxplorer](const dv_ros_capture::DVXplorerConfig &config, uint32_t) {
@@ -219,6 +225,7 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 			dvxplorer->setContrastThresholdOff(config.contrast_threshold_off);
 
 			updateNoiseFilter(config.noise_filtering, static_cast<int64_t>(config.noise_background_activity_time));
+			updateFrequencyFilter(config.frequency_filtering, static_cast<float>(config.cutoff_frequency));
 		});
 
 		if (dvxplorer->isTriggerStreamAvailable()) {
@@ -241,6 +248,8 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::DVXplorerConfig initialSettings = dv_ros_capture::DVXplorerConfig::__getDefault__();
 		initialSettings.noise_filtering                 = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time  = static_cast<int>(mParams.noiseBATime);
+		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
+		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
 
 		dvxplorerServer->updateConfig(initialSettings);
 		dvxplorerServer->setCallback([this, &dvxplorerm](const dv_ros_capture::DVXplorerConfig &config, uint32_t) {
@@ -249,6 +258,7 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 			dvxplorerm->setContrastThresholdOff(config.contrast_threshold_off);
 
 			updateNoiseFilter(config.noise_filtering, static_cast<int64_t>(config.noise_background_activity_time));
+			updateFrequencyFilter(config.frequency_filtering, static_cast<float>(config.cutoff_frequency));
 		});
 
 		// Support variable data interval sizes.
@@ -262,10 +272,14 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::PlaybackConfig initialSettings = dv_ros_capture::PlaybackConfig::__getDefault__();
 		initialSettings.noise_filtering                = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time = static_cast<int>(mParams.noiseBATime);
+		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
+		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
+
 
 		playbackServer->updateConfig(initialSettings);
 		playbackServer->setCallback([this](const dv_ros_capture::PlaybackConfig &config, uint32_t) {
 			updateNoiseFilter(config.noise_filtering, static_cast<int64_t>(config.noise_background_activity_time));
+			updateFrequencyFilter(config.frequency_filtering, static_cast<float>(config.cutoff_frequency));
 		});
 	}
 }
@@ -595,6 +609,24 @@ void CaptureNode::updateNoiseFilter(const bool enable, const int64_t backgroundA
 	else {
 		// Destroy the filter
 		mNoiseFilter = nullptr;
+	}
+}
+
+void CaptureNode::updateFrequencyFilter(const bool enable, const float cutoffFrequency) {
+	if (enable) {
+		// Create the filter and return
+		if (mFrequencyFilter == nullptr) {
+			mFrequencyFilter = std::make_unique<dv::noise::LowPassFilter<>>(
+				mReader->getEventResolution().value(), cutoffFrequency);
+			return;
+		}
+
+		// Noise filter is instantiated, just update the period
+		mFrequencyFilter->setCutOffFrequency(cutoffFrequency);
+	}
+	else {
+		// Destroy the filter
+		mFrequencyFilter = nullptr;
 	}
 }
 

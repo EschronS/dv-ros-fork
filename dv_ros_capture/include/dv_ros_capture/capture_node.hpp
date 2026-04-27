@@ -5,6 +5,7 @@
 #include <dv-processing/core/core.hpp>
 #include <dv-processing/io/mono_camera_recording.hpp>
 #include <dv-processing/noise/background_activity_noise_filter.hpp>
+#include <dv-processing/noise/frequency_filters.hpp>
 
 #include <dv_ros_messaging/messaging.hpp>
 
@@ -116,6 +117,8 @@ private:
 
 	std::unique_ptr<dv::noise::BackgroundActivityNoiseFilter<>> mNoiseFilter = nullptr;
 	void updateNoiseFilter(const bool enable, const int64_t backgroundActivityTime);
+	std::unique_ptr<dv::noise::LowPassFilter<>> mFrequencyFilter = nullptr;
+	void updateFrequencyFilter(const bool enable, const float cutoffFrequency);
 
 	dv::camera::CalibrationSet mCalibration;
 

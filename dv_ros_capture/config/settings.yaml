@@ -27,6 +27,10 @@ cameraName: ""
 noiseFiltering: false
 # Noise filter background activity time threshold in microseconds
 noiseBackgroundActivityTime: 2000
+# Enable frequency filtering on the event stream
+frequencyFiltering: true
+# Noise filter background activity time threshold in microseconds
+cutoff_frequency: 50.0
 # A list of devices for master camera to synchronize with
 syncDevice: []
 # Wait for synchronization signal before publishing data

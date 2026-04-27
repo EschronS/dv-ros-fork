@@ -23,6 +23,8 @@ struct Params {
 	bool unbiasedImuData           = true;
 	bool noiseFiltering            = false;
 	int64_t noiseBATime            = 2000;
+	bool frequencyFiltering        = false;
+	float cutoffFrequency          = 50.0;
 
 	std::vector<std::string> syncDeviceList;
 	bool waitForSync = false;
