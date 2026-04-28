@@ -10,6 +10,7 @@
 
 #include <chrono>
 #include <filesystem>
+#include <optional>
 #include <sensor_msgs/distortion_models.h>
 #include <sensor_msgs/image_encodings.h>
 
@@ -222,7 +223,9 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dvxplorerServer->setCallback([this, &dvxplorer](const dv_ros_capture::DVXplorerConfig &config, uint32_t) {
 			dvxplorer->setGlobalHold(config.global_hold);
 			dvxplorer->setContrastThresholdOn(config.contrast_threshold_on);
+			ROS_INFO_STREAM("set Contrast Threshold ON to: " << config.contrast_threshold_on);
 			dvxplorer->setContrastThresholdOff(config.contrast_threshold_off);
+			ROS_INFO_STREAM("set Contrast Threshold OFF to: " << config.contrast_threshold_off);
 
 			updateNoiseFilter(config.noise_filtering, static_cast<int64_t>(config.noise_background_activity_time));
 			updateFrequencyFilter(config.frequency_filtering, static_cast<float>(config.cutoff_frequency));
@@ -255,7 +258,9 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dvxplorerServer->setCallback([this, &dvxplorerm](const dv_ros_capture::DVXplorerConfig &config, uint32_t) {
 			dvxplorerm->setGlobalHold(config.global_hold);
 			dvxplorerm->setContrastThresholdOn(config.contrast_threshold_on);
+			ROS_INFO_STREAM("set Contrast Threshold ON to: " << config.contrast_threshold_on);
 			dvxplorerm->setContrastThresholdOff(config.contrast_threshold_off);
+			ROS_INFO_STREAM("set Contrast Threshold OFF to: " << config.contrast_threshold_off);
 
 			updateNoiseFilter(config.noise_filtering, static_cast<int64_t>(config.noise_background_activity_time));
 			updateFrequencyFilter(config.frequency_filtering, static_cast<float>(config.cutoff_frequency));
@@ -811,6 +816,10 @@ void CaptureNode::eventsPublisher() {
 				}
 				else {
 					store = *events;
+				}
+				if (mFrequencyFilter != nullptr) {
+					mFrequencyFilter->accept(store);
+					store = mFrequencyFilter->generateEvents();
 				}
 
 				if (mEventArrayPublisher.getNumSubscribers() > 0) {
