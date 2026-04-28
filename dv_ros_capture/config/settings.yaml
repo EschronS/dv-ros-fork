@@ -1,13 +1,13 @@
 # The time between two timestamps
 timeIncrement: 1000
 # If true, sensor_msgs Image of the camera frames is published
-frames: true
+frames: false
 # If true, dv_ros EventArray containing the events batch is published
 events: true
 # If true, sensor_msgs Imu containing Imu data is published
 imu: true
 # If true, Trigger msg containing Trigger data is published
-triggers: true
+triggers: false
 # Camera reference frame name for publishing IMU extrinsic calibration
 cameraFrameName: "camera"
 # IMU reference frame name for publishing IMU extrinsic calibration
@@ -26,11 +26,11 @@ cameraName: ""
 # Enable noise filtering on the event stream
 noiseFiltering: false
 # Noise filter background activity time threshold in microseconds
-noiseBackgroundActivityTime: 2000
+noiseBackgroundActivityTime: 1000 # 2000
 # Enable frequency filtering on the event stream
 frequencyFiltering: true
 # Noise filter background activity time threshold in microseconds
-cutoff_frequency: 50.0
+cutoffFrequency: 40.0
 # A list of devices for master camera to synchronize with
 syncDevice: []
 # Wait for synchronization signal before publishing data

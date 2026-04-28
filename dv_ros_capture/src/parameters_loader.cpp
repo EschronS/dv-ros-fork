@@ -28,10 +28,10 @@ ParametersLoader::ParametersLoader(const ros::NodeHandle &nodeHandle) {
 	nodeHandle.param<int>("noiseBackgroundActivityTime", value, 2000);
 	params_.noiseBATime = static_cast<int64_t>(value);
 
-	nodeHandle.param<bool>("frequencyFiltering", params_.frequencyFiltering, false);
+	nodeHandle.param<bool>("frequencyFiltering", params_.frequencyFiltering, true);
 	float fvalue;
-	nodeHandle.param<float>("noiseBackgroundActivityTime", fvalue, 50.0);
-	params_.cutoffFrequency = static_cast<float>(value);
+	nodeHandle.param<float>("cutoffFrequency", fvalue, 50.0);
+	params_.cutoffFrequency = static_cast<float>(fvalue);
 
 	std::string tmp;
 	nodeHandle.getParam("cameraCalibrationFilePath", tmp);

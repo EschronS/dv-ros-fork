@@ -1,3 +1,5 @@
 <launch>
-    <node pkg="dv_ros_capture" type="capture_node" name="event_camera" clear_params="true" output="screen" />
+    <node pkg="dv_ros_capture" type="capture_node" name="event_camera" clear_params="true" output="screen">
+    <rosparam command="load" file="$(find dv_ros_capture)/config/settings.yaml" />
+    </node>
 </launch>

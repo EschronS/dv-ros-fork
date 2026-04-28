@@ -4,3 +4,5 @@ exposure: 5000
 readout_mode: 0
 noise_filtering: false
 noise_background_activity_time: 2000
+frequency_filtering: true
+cutoff_frequency: 50.0
