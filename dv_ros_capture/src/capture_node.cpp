@@ -164,8 +164,8 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::DAVISConfig initialSettings    = dv_ros_capture::DAVISConfig::__getDefault__();
 		initialSettings.noise_filtering                = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time = static_cast<int>(mParams.noiseBATime);
-		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
-		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
+		initialSettings.frequency_filtering            = mParams.frequencyFiltering;
+		initialSettings.cutoff_frequency               = static_cast<float>(mParams.cutoffFrequency);
 
 		davisColorServer->updateConfig(initialSettings);
 		davisColorServer->setCallback([this, &davis](const dv_ros_capture::DAVISConfig &config, uint32_t) {
@@ -216,7 +216,7 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::DVXplorerConfig initialSettings = dv_ros_capture::DVXplorerConfig::__getDefault__();
 		initialSettings.noise_filtering                 = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time  = static_cast<int>(mParams.noiseBATime);
-		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
+		initialSettings.frequency_filtering             = mParams.frequencyFiltering;
 		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
 
 		dvxplorerServer->updateConfig(initialSettings);
@@ -251,7 +251,7 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::DVXplorerConfig initialSettings = dv_ros_capture::DVXplorerConfig::__getDefault__();
 		initialSettings.noise_filtering                 = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time  = static_cast<int>(mParams.noiseBATime);
-		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
+		initialSettings.frequency_filtering             = mParams.frequencyFiltering;
 		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
 
 		dvxplorerServer->updateConfig(initialSettings);
@@ -277,9 +277,8 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 		dv_ros_capture::PlaybackConfig initialSettings = dv_ros_capture::PlaybackConfig::__getDefault__();
 		initialSettings.noise_filtering                = mParams.noiseFiltering;
 		initialSettings.noise_background_activity_time = static_cast<int>(mParams.noiseBATime);
-		initialSettings.frequency_filtering              = mParams.frequencyFiltering;
-		initialSettings.cutoff_frequency                = static_cast<float>(mParams.cutoffFrequency);
-
+		initialSettings.frequency_filtering            = mParams.frequencyFiltering;
+		initialSettings.cutoff_frequency               = static_cast<float>(mParams.cutoffFrequency);
 
 		playbackServer->updateConfig(initialSettings);
 		playbackServer->setCallback([this](const dv_ros_capture::PlaybackConfig &config, uint32_t) {
@@ -621,8 +620,8 @@ void CaptureNode::updateFrequencyFilter(const bool enable, const float cutoffFre
 	if (enable) {
 		// Create the filter and return
 		if (mFrequencyFilter == nullptr) {
-			mFrequencyFilter = std::make_unique<dv::noise::LowPassFilter<>>(
-				mReader->getEventResolution().value(), cutoffFrequency);
+			mFrequencyFilter
+				= std::make_unique<dv::noise::LowPassFilter<>>(mReader->getEventResolution().value(), cutoffFrequency);
 			return;
 		}
 
@@ -744,8 +743,8 @@ void CaptureNode::imuPublisher() {
 				if (mImuPublisher.getNumSubscribers() > 0) {
 					for (auto &imu : *imuData) {
 						imu.timestamp += mImuTimeOffset;
-						if(last_imu_ts == imu.timestamp) { // if duplicate ts
-							imu.timestamp += 1257; // timestamp is in us
+						if (imu.timestamp - last_imu_ts <= 1000) { // if duplicate ts
+							imu.timestamp += 1257;                 // timestamp is in us
 						}
 						mImuPublisher.publish(transformImuFrame(dv_ros_msgs::toRosImuMessage(imu)));
 						last_imu_ts = imu.timestamp;
@@ -866,26 +865,26 @@ void CaptureNode::runDiscovery(const std::string &syncServiceName) {
 
 	mDiscoveryPublisher = mNodeHandle->advertise<DiscoveryMessage>("/dvs/discovery", 10);
 	mDiscoveryThread    = std::make_unique<std::thread>([this, &liveCapture, &syncCamera, &syncServiceName] {
-        DiscoveryMessage message;
-        message.isMaster           = (syncCamera) ? (syncCamera->isMaster()) : (true);
-        message.name               = liveCapture->getCameraName();
-        message.startupTime        = startupTime;
-        message.publishingEvents   = mParams.events;
-        message.publishingFrames   = mParams.frames;
-        message.publishingImu      = mParams.imu;
-        message.publishingTriggers = mParams.triggers;
-        message.syncServiceTopic   = syncServiceName;
-        // 5 Hz is enough
-        ros::Rate rate(5.0);
-        while (mSpinThread) {
-            if (mDiscoveryPublisher.getNumSubscribers() > 0) {
-                message.header.seq++;
-                message.header.stamp = ros::Time::now();
-                mDiscoveryPublisher.publish(message);
-            }
-            rate.sleep();
-        }
-    });
+		DiscoveryMessage message;
+		message.isMaster           = (syncCamera) ? (syncCamera->isMaster()) : (true);
+		message.name               = liveCapture->getCameraName();
+		message.startupTime        = startupTime;
+		message.publishingEvents   = mParams.events;
+		message.publishingFrames   = mParams.frames;
+		message.publishingImu      = mParams.imu;
+		message.publishingTriggers = mParams.triggers;
+		message.syncServiceTopic   = syncServiceName;
+		// 5 Hz is enough
+		ros::Rate rate(5.0);
+		while (mSpinThread) {
+			if (mDiscoveryPublisher.getNumSubscribers() > 0) {
+				message.header.seq++;
+				message.header.stamp = ros::Time::now();
+				mDiscoveryPublisher.publish(message);
+			}
+			rate.sleep();
+		}
+	});
 }
 
 std::map<std::string, std::string> CaptureNode::discoverSyncDevices() const {

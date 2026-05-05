@@ -147,7 +147,7 @@ private:
 	void imuPublisher();
 	bool setImuInfo(dv_ros_capture::SetImuInfo::Request &req, dv_ros_capture::SetImuInfo::Response &rsp);
 	bool setImuBiases(dv_ros_capture::SetImuBiases::Request &req, dv_ros_capture::SetImuBiases::Response &rsp);
-	int  last_imu_ts = {0};
+	int64_t last_imu_ts = 0;
 
 	/**
 	 * Publish the events if mEventsBool is True
