@@ -740,10 +740,15 @@ void CaptureNode::imuPublisher() {
 				imuData = mReader->getNextImuBatch();
 			}
 			while (imuData.has_value() && !imuData->empty() && timestamp >= imuData->back().timestamp) {
+				// real imu freq without further configuration is 795Hz -> 1.257ms between each ts
 				if (mImuPublisher.getNumSubscribers() > 0) {
 					for (auto &imu : *imuData) {
 						imu.timestamp += mImuTimeOffset;
+						if(last_imu_ts == imu.timestamp) { // if duplicate ts
+							imu.timestamp += 1257; // timestamp is in us
+						}
 						mImuPublisher.publish(transformImuFrame(dv_ros_msgs::toRosImuMessage(imu)));
+						last_imu_ts = imu.timestamp;
 					}
 				}
 
