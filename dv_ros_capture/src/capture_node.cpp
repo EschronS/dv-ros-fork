@@ -744,7 +744,7 @@ void CaptureNode::imuPublisher() {
 					for (auto &imu : *imuData) {
 						imu.timestamp += mImuTimeOffset;
 						if (imu.timestamp - last_imu_ts <= 1000) { // if duplicate ts
-							imu.timestamp += 1257;                 // timestamp is in us
+							imu.timestamp = last_imu_ts + 1257;    // timestamp is in us
 						}
 						mImuPublisher.publish(transformImuFrame(dv_ros_msgs::toRosImuMessage(imu)));
 						last_imu_ts = imu.timestamp;
