@@ -743,8 +743,10 @@ void CaptureNode::imuPublisher() {
 				if (mImuPublisher.getNumSubscribers() > 0) {
 					for (auto &imu : *imuData) {
 						imu.timestamp += mImuTimeOffset;
-						if (imu.timestamp - last_imu_ts <= 1000) { // if duplicate ts
-							imu.timestamp = last_imu_ts + 1257;    // timestamp is in us
+						// not sure imu data is in sequence
+						// check how often this occurs
+						if (imu.timestamp - last_imu_ts <= 10) { // this check whould be smaller than 1000, more like 10
+							imu.timestamp = last_imu_ts + 1257;  // timestamp is in us
 						}
 						mImuPublisher.publish(transformImuFrame(dv_ros_msgs::toRosImuMessage(imu)));
 						last_imu_ts = imu.timestamp;
