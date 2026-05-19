@@ -5,6 +5,8 @@
 #include <dv-processing/kinematics/transformation.hpp>
 #include <dv-processing/noise/frequency_filters.hpp>
 
+#include "ros/console.h"
+
 #include <fmt/chrono.h>
 #include <fmt/core.h>
 
@@ -50,11 +52,11 @@ CaptureNode::CaptureNode(std::shared_ptr<ros::NodeHandle> nodeHandle, const dv_r
 	}
 
 	if (mParams.imu) {
-		mImuPublisher = mNodeHandle->advertise<ImuMessage>("imu", 1000);
+		mImuPublisher = mNodeHandle->advertise<ImuMessage>("imu", 10000);
 	}
 
 	if (mParams.events) {
-		mEventArrayPublisher = mNodeHandle->advertise<EventArrayMessage>("events", 1000);
+		mEventArrayPublisher = mNodeHandle->advertise<EventArrayMessage>("events", 10000);
 	}
 
 	if (mParams.triggers) {
@@ -656,7 +658,9 @@ void CaptureNode::clock(int64_t start, int64_t end, int64_t timeIncrement) {
 				mImuQueue.push(start);
 			}
 			if (mParams.events) {
-				mEventsQueue.push(start);
+				bool not_full_ev_queue = mEventsQueue.push(start);
+				if (!not_full_ev_queue)
+					ROS_WARN("Event queue full!!! dropping events...");
 			}
 			if (mParams.triggers) {
 				mTriggerQueue.push(start);

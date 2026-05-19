@@ -32,7 +32,7 @@
 #include <thread>
 
 namespace dv_capture_node {
-using TimestampQueue = boost::lockfree::spsc_queue<int64_t, boost::lockfree::capacity<1000>>;
+using TimestampQueue = boost::lockfree::spsc_queue<int64_t, boost::lockfree::capacity<10000>>;
 
 using TransformMessage  = DV_ROS_MSGS(geometry_msgs::TransformStamped);
 using TransformsMessage = DV_ROS_MSGS(tf2_msgs::TFMessage);
