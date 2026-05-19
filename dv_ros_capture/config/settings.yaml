@@ -24,13 +24,13 @@ aedat4FilePath: ""
 # Camera to be read
 cameraName: ""
 # Enable noise filtering on the event stream
-noiseFiltering: false
+noiseFiltering: true
 # Noise filter background activity time threshold in microseconds
 noiseBackgroundActivityTime: 1000 # 2000
 # Enable frequency filtering on the event stream
 frequencyFiltering: true
 # Noise filter background activity time threshold in microseconds
-cutoffFrequency: 40.0
+cutoffFrequency: 100.0
 # A list of devices for master camera to synchronize with
 syncDevice: []
 # Wait for synchronization signal before publishing data
