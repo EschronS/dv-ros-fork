@@ -1,5 +1,5 @@
 # The time between two timestamps
-timeIncrement: 1000
+timeIncrement: 10000
 # If true, sensor_msgs Image of the camera frames is published
 frames: false
 # If true, dv_ros EventArray containing the events batch is published
@@ -24,13 +24,13 @@ aedat4FilePath: ""
 # Camera to be read
 cameraName: ""
 # Enable noise filtering on the event stream
-noiseFiltering: true
+noiseFiltering: false
 # Noise filter background activity time threshold in microseconds
 noiseBackgroundActivityTime: 1000 # 2000
 # Enable frequency filtering on the event stream
 frequencyFiltering: true
 # Noise filter background activity time threshold in microseconds
-cutoffFrequency: 100.0
+cutoffFrequency: 50.0
 # A list of devices for master camera to synchronize with
 syncDevice: []
 # Wait for synchronization signal before publishing data
