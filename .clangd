@@ -2,3 +2,8 @@ CompileFlags:
   Compiler: g++-13
   Add:
     - -std=gnu++20
+    - -I/usr/include
+    - -I/usr/include/dv-processing
+    - -I/usr/include/opencv4
+    - -I/usr/include/eigen3
+  Compiler: /usr/bin/g++-13
