@@ -1,3 +1,6 @@
+# CONFIGURATION CHANGES FOR RASPBERRY PI 5
+dv_ros_capture configuration is described [here](dv_ros_capture/README.md)
+
 # DV ROS
 
 ROS drivers and sample nodes for iniVation cameras and DV software infrastructure.

@@ -1,3 +1,39 @@
+# Configuration for running on Raspberry Pi 5 in Docker
+
+This repo contains my changes to the dv_ros_capture node for recording
+event data bags on a Raspberry Pi 5 compute module and a DVXplorer Micro.
+
+## Goal of my changes
+
+Prevent or minimize event drops and IMU timestamp inconsistencies when
+recording event data ROS bags on a Raspberry Pi 5 compute module.
+
+## Measures taken
+
+- increased contrast threshold
+- increased queue sizes (here and in the dependency dv-processing,
+  see: [dv-ros-docker](https://github.com/EschronS/dv-ros-docker-rp5))
+- publishing at 100 Hz instead of 1000 Hz to reduce ROS overhead
+- handle duplicate IMU timestamps by incrementing the timestamp by the
+  inverse IMU frequency (the Micro has no proper IMU clock)
+- implemented a frequency low-pass filter, rejecting events above a local
+  frequency at any pixel (using dv-processing)
+
+## Notes
+
+- the noise filter provided by dv-processing was tested but was very
+  expensive, so it is not included in these changes
+- profiling of the running node can be done with
+  `sudo perf top -p $(pgrep capture_node)`
+
+## Other relevant repos
+
+- my [dv-ros-docker](https://github.com/EschronS/dv-ros-docker-rp5)
+  setup including the patched dv-processing
+- my ROS 2 driver alternative:
+  [dv_processing_driver](https://github.com/EschronS/dv_processing_driver)
+- current official dv-ros on [gitlab](https://gitlab.com/inivation/dv/dv-ros)
+
 # DV ROS Capture
 
 This project contains a capture node that can is intended for live camera and aedat4 recording data publishing in ROS.
