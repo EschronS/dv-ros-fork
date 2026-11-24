@@ -1,0 +1,33 @@
+dv-ros (Raspberry Pi 5 / DVXplorer Micro fork)
+Copyright 2022-2025 iniVation AG
+Copyright 2026 Erik Schlenzka (modifications only)
+
+This product includes software developed by iniVation AG
+(https://www.inivation.com/) as the project "dv-ros":
+https://gitlab.com/inivation/dv/dv-ros
+
+Upstream is declared under the Apache License, Version 2.0 in the
+package.xml files of its ROS packages. A copy of the license is
+included in the LICENSE file of this repository.
+
+Modifications in this fork by Erik Schlenzka:
+- increased contrast threshold and queue sizes
+- event publishing at 100 Hz instead of 1000 Hz
+- duplicate IMU timestamp handling for the DVXplorer Micro
+- frequency low-pass filter for event data
+- Raspberry Pi 5 / Docker configuration and documentation
+
+The complete change history is available in the git log. iniVation does
+not endorse or support this fork.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

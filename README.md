@@ -1,6 +1,16 @@
 # CONFIGURATION CHANGES FOR RASPBERRY PI 5
 dv_ros_capture configuration is described [here](dv_ros_capture/README.md)
 
+## License and attribution
+
+This fork is based on [iniVation's dv-ros](https://gitlab.com/inivation/dv/dv-ros).
+The upstream packages declare Apache-2.0 in their `package.xml` files, and this
+fork is distributed under the same [Apache-2.0 license](LICENSE).
+
+Modifications for the Raspberry Pi 5 / DVXplorer Micro by Erik Schlenzka are
+described in [dv_ros_capture/README.md](dv_ros_capture/README.md), in
+[NOTICE](NOTICE), and in the git history. iniVation does not endorse this fork.
+
 # DV ROS
 
 ROS drivers and sample nodes for iniVation cameras and DV software infrastructure.

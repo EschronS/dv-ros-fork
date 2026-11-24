@@ -76,3 +76,8 @@ Multi-camera setups connected with synchronization cables require synchronizatio
 streams. This can be achieved by setting up the launch files on which cameras need to be synchronized. This guarantees
 the synchronization to happen at correct time, since all cameras need to be opened prior to sending synchronization
 signal. Please refer `launch/synchronization.launch` file for details on how to set up the multi-camera synchronization.
+
+## License
+
+Derived from iniVation's dv-ros and distributed under Apache-2.0. See
+[LICENSE](../LICENSE) and [NOTICE](../NOTICE).
